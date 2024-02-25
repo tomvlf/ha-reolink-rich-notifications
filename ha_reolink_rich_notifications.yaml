@@ -10,12 +10,12 @@ blueprint:
   domain: automation
   input:
     notify_device:
-      name: Device to notify
-      description:
-        Device or group of devices for notification through mobile_app notification service. For example
-        `<notify.mobile_app_iphone>`, `<notify.all_devices>`, `<notify.notify>`.
+      name: Devices to notify
+      default: []
       selector:
-        action:
+        device:
+          integration: mobile_app
+          multiple: true
 
     trigger_entity:
       name: Trigger entity
@@ -143,35 +143,38 @@ action:
     service: camera.snapshot
 
   # Send actionable notification
-  - service: !input notify_device
-    data:
-      title: "{{ notification_title }}"
-      message: "{{ notification_message }}"
-      data:
-        tag: "{{ notification_title }}"
-        persistent: "{{ persistent_notification }}"
-        image: "{{ image_file }}"
-        ttl: 0
-        priority: high
-        actions: >
-          {% set titles = [action_1_title, action_2_title, action_3_title] %}
-          {% set uris = [action_1_uri, action_2_uri, action_3_uri] %}
-          {% set actions = namespace(data = []) %}
+  - repeat:
+    for_each: !input notify_device
+    sequence:
+      - service: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+        data:
+          title: "{{ notification_title }}"
+          message: "{{ notification_message }}"
+          data:
+            tag: "{{ notification_title }}"
+            persistent: "{{ persistent_notification }}"
+            image: "{{ image_file }}"
+            ttl: 0
+            priority: high
+            actions: >
+              {% set titles = [action_1_title, action_2_title, action_3_title] %}
+              {% set uris = [action_1_uri, action_2_uri, action_3_uri] %}
+              {% set actions = namespace(data = []) %}
 
-          {% for title in titles %}
-            {% if title|length %}
-              {% set uri = uris[loop.index - 1] %}
-              {% set action_name = "action" + loop.index|string %}
-              {% set action = {
-                "action": "URI" if uri|length else action_name,
-                "title": title,
-                "uri": uri 
-                }
-              %}
-              {% set actions.data = actions.data + [action] %}
-            {% endif %}
-          {% endfor %}
-          {{ actions.data }}
+              {% for title in titles %}
+                {% if title|length %}
+                  {% set uri = uris[loop.index - 1] %}
+                  {% set action_name = "action" + loop.index|string %}
+                  {% set action = {
+                    "action": "URI" if uri|length else action_name,
+                    "title": title,
+                    "uri": uri 
+                    }
+                  %}
+                  {% set actions.data = actions.data + [action] %}
+                {% endif %}
+              {% endfor %}
+              {{ actions.data }}
 
   # Wait for the user to select an action
   - wait_for_trigger:
