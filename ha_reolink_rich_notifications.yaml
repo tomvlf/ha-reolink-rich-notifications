@@ -22,7 +22,9 @@ blueprint:
       description: Send the notification when this boolean turns on
       selector:
         entity:
-          domain: binary_sensor
+          filter:
+            - integration: reolink
+              domain: binary_sensor
 
     snapshot_cam:
       name: Camera for Snapshot
