@@ -31,7 +31,9 @@ blueprint:
       description: The camera from wich take photo for notification.
       selector:
         entity:
-          domain: camera
+          filter:
+            - integration: reolink
+              domain: camera
 
     notification_title:
       name: Notification title (Optional)
