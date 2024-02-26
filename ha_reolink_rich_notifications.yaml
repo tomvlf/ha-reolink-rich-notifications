@@ -41,13 +41,6 @@ blueprint:
       description: The message of the notification
       default: ""
 
-    persistent_notification:
-      name: Create persistent notification?
-      description: Persistent notifications cannot be dimissed by swiping away
-      default: false
-      selector:
-        boolean:
-
     # Action 1
 
     action_1_title:
@@ -114,7 +107,6 @@ variables:
   snapshot_cam: !input snapshot_cam
   notification_title: !input notification_title
   notification_message: !input notification_message
-  persistent_notification: !input persistent_notification
   action_1_title: !input action_1_title
   action_1_uri: !input action_1_uri
   first_action: !input first_action
@@ -152,8 +144,7 @@ action:
           message: "{{ notification_message }}"
           data:
             tag: "{{ notification_title }}"
-            persistent: "{{ persistent_notification }}"
-            image: "{{ image_file }}"
+            image: "/api/camera_proxy/{{ snapshot_cam }}"
             ttl: 0
             priority: high
             actions: >
