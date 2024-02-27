@@ -36,6 +36,16 @@ blueprint:
             - integration: reolink
               domain: camera
 
+    retrigger_delay:
+      name: Retrigger Delay
+      description: Time to wait before triggering the same camera again.
+      default:
+        hours: 0
+        minutes: 0
+        seconds: 20
+      selector:
+        duration:
+
     # Action 1
 
     action_1_title:
