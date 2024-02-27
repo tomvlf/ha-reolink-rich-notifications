@@ -138,7 +138,7 @@ action:
 
   # Send actionable notification
   - repeat:
-    for_each: !input notify_device
+    for_each: '{{ notify_device }}'
     sequence:
       - service: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
         data:
