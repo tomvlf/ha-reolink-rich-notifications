@@ -36,16 +36,6 @@ blueprint:
             - integration: reolink
               domain: camera
 
-    notification_title:
-      name: Notification title (Optional)
-      description: The title of the notification
-      default: ""
-
-    notification_message:
-      name: Notification message (Optional)
-      description: The message of the notification
-      default: ""
-
     # Action 1
 
     action_1_title:
@@ -110,8 +100,6 @@ variables:
   notify_device: !input notify_device
   trigger_entity: !input trigger_entity
   snapshot_cam: !input snapshot_cam
-  notification_title: !input notification_title
-  notification_message: !input notification_message
   action_1_title: !input action_1_title
   action_1_uri: !input action_1_uri
   first_action: !input first_action
@@ -145,7 +133,6 @@ action:
         - service: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
           data:
             title: "{{ trigger.from_state.attributes.friendly_name }}"
-            message: "{{ notification_message }}"
             data:
               tag: "{{ trigger.from_state.attributes.friendly_name }}"
               image: "/media/local/{{ image_file }}"
