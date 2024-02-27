@@ -116,7 +116,7 @@ trigger:
   from: "off"
   to: "on"
   variables:
-    image_file: "reolink_rich_notifications/{{ trigger.to_state.last_updated | as_timestamp | timestamp_custom('%Y-%m-%d_%H-%M-%S') }}_{{ trigger.id }}.jpg"
+    image_file: "reolink_rich_notifications/{{ trigger.to_state.last_updated | as_timestamp | timestamp_custom('%Y-%m-%d_%H-%M-%S') }}_{{ trigger.to_state.context.id }}.jpg"
 
 action:
   # Create camera snapshot
