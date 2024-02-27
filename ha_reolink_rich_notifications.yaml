@@ -120,7 +120,7 @@ variables:
   action_3_title: !input action_3_title
   action_3_uri: !input action_3_uri
   third_action: !input third_action
-  image_file: '/media/local/reolink_rich_notifications/{{ expand(trigger_entity)[0].last_changed | as_timestamp  | timestamp_custom("%Y-%m-%d_%H-%M-%S") }}.jpg'
+  image_file: "/media/local/reolink_rich_notifications/{{ expand(trigger_entity)[0].last_changed | as_timestamp  | timestamp_custom('%Y-%m-%d_%H-%M-%S') }}.jpg"
 
 trigger:
   platform: state
@@ -132,13 +132,13 @@ action:
   # Create camera snapshot
   - data_template:
       entity_id: !input snapshot_cam
-      filename: '{{ image_file }}'
+      filename: "{{ image_file }}"
 
     service: camera.snapshot
 
   # Send actionable notification
   - repeat:
-    for_each: '{{ notify_device }}'
+    for_each: !input notify_device
     sequence:
       - service: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
         data:
