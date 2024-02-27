@@ -121,13 +121,14 @@ variables:
   action_3_title: !input action_3_title
   action_3_uri: !input action_3_uri
   third_action: !input third_action
-  image_file: "reolink_rich_notifications/{{ expand(trigger_entity)[0].last_changed | as_timestamp  | timestamp_custom('%Y-%m-%d_%H-%M-%S') }}.jpg"
 
 trigger:
   platform: state
   entity_id: !input trigger_entity
   from: "off"
   to: "on"
+  variables:
+    image_file: "reolink_rich_notifications/{{ trigger.now.strftime('%Y-%m-%d_%H-%M-%S') }}_{{ this.context.id }}.jpg"
 
 action:
   # Create camera snapshot
