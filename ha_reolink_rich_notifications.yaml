@@ -119,14 +119,7 @@ trigger:
     image_file: "reolink_rich_notifications/{{ trigger.to_state.last_updated | as_timestamp | timestamp_custom('%Y-%m-%d_%H-%M-%S') }}_{{ trigger.to_state.context.id }}.jpg"
 
 action:
-  # Create camera snapshot
-  - data_template:
-      entity_id: !input snapshot_cam
-      filename: "/media/{{ image_file }}"
-
-    service: camera.snapshot
-
-  # Send actionable notification
+  # Send notification without image first.
   - repeat:
       for_each: "{{ notify_device }}"
       sequence:
@@ -135,7 +128,27 @@ action:
             title: "{{ trigger.from_state.attributes.friendly_name }}"
             message: ""
             data:
-              tag: "{{ trigger.from_state.attributes.friendly_name }}"
+              tag: "{{ trigger.to_state.context.id }}"
+              ttl: 0
+              priority: high
+
+  # Create camera snapshot
+  - data_template:
+      entity_id: !input snapshot_cam
+      filename: "/media/{{ image_file }}"
+
+    service: camera.snapshot
+
+  # Re-send notification with image data.
+  - repeat:
+      for_each: "{{ notify_device }}"
+      sequence:
+        - service: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
+          data:
+            title: "{{ trigger.from_state.attributes.friendly_name }}"
+            message: ""
+            data:
+              tag: "{{ trigger.to_state.context.id }}"
               image: "/media/local/{{ image_file }}"
               ttl: 0
               priority: high
