@@ -22,6 +22,7 @@ blueprint:
       description: Send the notification when this boolean turns on
       selector:
         entity:
+          multiple: true
           filter:
             - integration: reolink
               domain: binary_sensor
