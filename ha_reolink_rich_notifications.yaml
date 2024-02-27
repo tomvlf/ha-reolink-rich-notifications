@@ -142,10 +142,10 @@ action:
       sequence:
         - service: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
           data:
-            title: "{{ notification_title }}"
+            title: "{{ trigger.from_state.attributes.friendly_name }}"
             message: "{{ notification_message }}"
             data:
-              tag: "{{ notification_title }}"
+              tag: "{{ trigger.from_state.attributes.friendly_name }}"
               image: "/media/local/{{ image_file }}"
               ttl: 0
               priority: high
