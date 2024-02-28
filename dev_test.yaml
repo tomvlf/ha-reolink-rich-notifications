@@ -30,6 +30,10 @@ trigger:
     minutes: "/5"
 
 action:
-  - service: input_boolean.turn_on
+  - service: input_boolean.toggle
     target:
       entity_id: input_boolean.overwrite_boolean
+  - service: logbook.log
+    data_template:
+      name: Jeff
+      message: "{{ states('input_boolean.overwrite_boolean') }}"
