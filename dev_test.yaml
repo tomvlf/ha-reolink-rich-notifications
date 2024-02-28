@@ -1,0 +1,38 @@
+blueprint:
+  name: Dev Test Jeff
+  description: >
+    Testing testing testing.
+
+  domain: automation
+  input:
+    notify_device:
+      name: Devices to notify
+      default: []
+      selector:
+        device:
+          integration: mobile_app
+          multiple: true
+
+    overwrite_boolean:
+        name: Overwrite Boolean (Optional)
+        description: sdfsdf
+        selector:
+          entity:
+            filter:
+              domain: input_boolean
+        default:
+
+mode: restart
+max_exceeded: silent
+
+trigger:
+  - platform: time_pattern
+    minutes: "/5"
+
+action:
+  - wait_for_trigger:
+      platform: event
+      event_type: mobile_app_notification_action
+  - service: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.overwrite_boolean
