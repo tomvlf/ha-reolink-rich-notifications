@@ -30,9 +30,6 @@ trigger:
     minutes: "/5"
 
 action:
-  - wait_for_trigger:
-      platform: event
-      event_type: mobile_app_notification_action
   - service: input_boolean.turn_on
     target:
       entity_id: input_boolean.overwrite_boolean
