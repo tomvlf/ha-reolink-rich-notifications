@@ -35,7 +35,6 @@ trigger:
     minutes: "/5"
 
 action:
-  - condition:
-      alias: "Testing condition"
-      condition: template
-      value_template: "{{ trigger_entity | map('states') | list }}"
+  - condition: or
+    conditions:
+      - "{{ trigger_entity | map('states') | list }}"
