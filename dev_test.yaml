@@ -35,11 +35,7 @@ trigger:
     minutes: "/5"
 
 action:
-  - service: logbook.log
-    data_template:
-      name: Jeff
-      message: "dude"
-  - service: logbook.log
-    data_template:
-      name: Jeff
-      message: "dude{{ trigger_entity }}"
+  - condition:
+      alias: "Testing condition"
+      condition: template
+      value_template: "{{ trigger_entity | map('states') | list }}"
