@@ -13,27 +13,33 @@ blueprint:
           integration: mobile_app
           multiple: true
 
-    overwrite_boolean:
-        name: Overwrite Boolean (Optional)
-        description: sdfsdf
-        selector:
-          entity:
-            filter:
-              domain: input_boolean
-        default:
+    trigger_entity:
+      name: Trigger entity
+      description: Send the notification when this boolean turns on
+      selector:
+        entity:
+          multiple: true
+          filter:
+            - integration: reolink
+              domain: binary_sensor
 
 mode: restart
 max_exceeded: silent
+
+variables:
+  notify_device: !input notify_device
+  trigger_entity: !input trigger_entity
 
 trigger:
   - platform: time_pattern
     minutes: "/5"
 
 action:
-  - service: input_boolean.toggle
-    target:
-      entity_id: input_boolean.overwrite_boolean
   - service: logbook.log
     data_template:
       name: Jeff
-      message: "{{ states('input_boolean.overwrite_boolean') }}"
+      message: "dude"
+  - service: logbook.log
+    data_template:
+      name: Jeff
+      message: "dude{{ trigger_entity }}"
