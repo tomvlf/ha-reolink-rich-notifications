@@ -143,11 +143,10 @@ action:
         }}"
 
   # Create camera snapshot
-  - data_template:
+  - service: camera.snapshot
+    data_template:
       entity_id: {{ camera_to_snapshot }}
       filename: "/media/{{ image_file }}"
-
-    service: camera.snapshot
 
   # Re-send notification with image data.
   - repeat:
