@@ -161,6 +161,7 @@ action:
               image: "/media/local/{{ image_file }}"
               ttl: 0
               priority: high
+              url: "app://com.mcu.reolink"
               clickAction: "app://com.mcu.reolink"
               actions: >
                 {% set titles = [action_1_title, action_2_title, action_3_title] %}
