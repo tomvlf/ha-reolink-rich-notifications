@@ -27,15 +27,6 @@ blueprint:
             - integration: reolink
               domain: binary_sensor
 
-    snapshot_cam:
-      name: Camera for Snapshot
-      description: The camera from wich take photo for notification.
-      selector:
-        entity:
-          filter:
-            - integration: reolink
-              domain: camera
-
     retrigger_delay:
       name: Retrigger Delay
       description: Time to wait before triggering the same camera again.
@@ -109,7 +100,6 @@ max_exceeded: silent
 variables:
   notify_device: !input notify_device
   trigger_entity: !input trigger_entity
-  snapshot_cam: !input snapshot_cam
   action_1_title: !input action_1_title
   action_1_uri: !input action_1_uri
   first_action: !input first_action
@@ -154,7 +144,7 @@ action:
 
   # Create camera snapshot
   - data_template:
-      entity_id: !input snapshot_cam
+      entity_id: {{ camera_to_snapshot }}
       filename: "/media/{{ image_file }}"
 
     service: camera.snapshot
