@@ -17,7 +17,7 @@ blueprint:
           integration: mobile_app
           multiple: true
 
-    trigger_entity:
+    trigger_entities:
       name: Trigger entity
       description: Send the notification when this boolean turns on
       selector:
@@ -99,7 +99,7 @@ max_exceeded: silent
 
 variables:
   notify_device: !input notify_device
-  trigger_entity: !input trigger_entity
+  trigger_entities: !input trigger_entities
   action_1_title: !input action_1_title
   action_1_uri: !input action_1_uri
   first_action: !input first_action
@@ -112,13 +112,29 @@ variables:
 
 trigger:
   platform: state
-  entity_id: !input trigger_entity
+  entity_id: !input trigger_entities
   from: "off"
   to: "on"
   variables:
     image_file: "reolink_rich_notifications/{{ trigger.to_state.last_updated | as_timestamp | timestamp_custom('%Y-%m-%d_%H-%M-%S') }}_{{ trigger.to_state.context.id }}.jpg"
 
 action:
+  - variables:
+      camera_entities: "{{ device_entities(device_id(trigger.entity_id)) | select('match', '^camera\\.') | list }}"
+      camera_to_snapshot: >
+        {{
+        (camera_entities | select('match', '.*_snapshots_fluent$') | first) or
+        (camera_entities | select('match', '.*_snapshots_clear$') | first) or
+        (camera_entities | select('match', '.*_fluent$') | first) or
+        (camera_entities | first)
+        }}
+      last_triggered: >
+        {{
+        trigger_entities | select('is_device_attr', 'id', device_id(trigger.entity_id)) |
+        expand | map(attribute = 'last_updated') | list
+        }}
+
+
   # Send notification without image first.
   - repeat:
       for_each: "{{ notify_device }}"
@@ -131,16 +147,6 @@ action:
               tag: "{{ trigger.to_state.context.id }}"
               ttl: 0
               priority: high
-
-  - variables:
-      camera_entities: "{{ device_entities(device_id(trigger.entity_id)) | select('match', '^camera\\.') | list }}"
-      camera_to_snapshot: >
-        {{
-        (camera_entities | select('match', '.*_snapshots_fluent$') | first) or
-        (camera_entities | select('match', '.*_snapshots_clear$') | first) or
-        (camera_entities | select('match', '.*_fluent$') | first) or
-        (camera_entities | first)
-        }}
 
   # Create camera snapshot
   - service: camera.snapshot
