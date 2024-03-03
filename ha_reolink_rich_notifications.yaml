@@ -3,14 +3,13 @@ blueprint:
   description: >
     Send Reolink rich notifications to an Android device.
 
-    Adapted from:
-     - Forked from McDAlexander (https://gist.github.com/McDAlexander/56eb3f2e421e283460b3d641fd002ea8)
-     - Customized from vorion's blueprint.
+    Documentation: https://github.com/jterrace/ha-reolink-rich-notifications
 
   domain: automation
   input:
     notify_device:
-      name: Devices to notify
+      name: Devices to Notify
+      description: These mobile devices will receive a notification when alerts are triggered.
       default: []
       selector:
         device:
@@ -18,8 +17,8 @@ blueprint:
           multiple: true
 
     trigger_entities:
-      name: Trigger entity
-      description: Send the notification when this boolean turns on
+      name: Trigger Sensors
+      description: These Reolink sensors will be monitored to determine when to send an alert.
       selector:
         entity:
           multiple: true
