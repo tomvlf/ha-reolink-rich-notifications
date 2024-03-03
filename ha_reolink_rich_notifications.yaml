@@ -127,10 +127,14 @@ action:
         (camera_entities | select('match', '.*_fluent$') | first) or
         (camera_entities | first)
         }}
-      last_triggered: >
+      camera_last_triggered: >
         {{
-        trigger_entities | select('is_device_attr', 'id', device_id(trigger.entity_id)) |
-        expand | map(attribute = 'last_updated') | list
+        trigger_entities |
+        select('ne', trigger.entity_id) |
+        select('is_device_attr', 'id', device_id(trigger.entity_id)) |
+        expand |
+        map(attribute = 'last_updated') |
+        list
         }}
 
 
