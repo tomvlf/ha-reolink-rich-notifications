@@ -128,22 +128,21 @@ action:
         (camera_entities | select('match', '.*_fluent$') | first) or
         (camera_entities | first)
         }}
-      camera_other_sensor_times: >
-        {{
-        trigger_entities |
-        select('ne', trigger.entity_id) |
-        select('is_device_attr', 'id', device_id(trigger.entity_id)) |
-        expand |
-        map(attribute = 'last_updated') |
-        list
-        }}
-      camera_last_triggered_time: "{{ camera_other_sensor_times|max if camera_other_sensor_times|length > 0 else None }}"
-      wtf0: "{{ camera_other_sensor_times|max }}"
-      wtf1: "{{ camera_last_triggered_time is not none }}"
-      wtf2: "{{ trigger.to_state.last_updated }}"
-      wtf3: "{{ camera_last_triggered_time|as_datetime }}"
-      wtf4: "{{ retrigger_delay }}"
-      #should_skip_notification: "{{ camera_last_triggered_time is not none and (trigger.to_state.last_updated - camera_last_triggered_time|as_datetime) < retrigger_delay }}"
+      should_skip_notification: >
+        {%
+          set other_sensor_times =
+            trigger_entities |
+            select('ne', trigger.entity_id) |
+            select('is_device_attr', 'id', device_id(trigger.entity_id)) |
+            expand |
+            map(attribute = 'last_updated') |
+            list
+        %}
+        {% if other_sensor_times|length > 0 %}
+          {{ trigger.to_state.last_updated - other_sensor_times|max < retrigger_delay }}
+        {% else %}
+          false
+        {% endif %}
 
   # Send notification without image first.
   - repeat:
@@ -157,6 +156,8 @@ action:
               tag: "{{ trigger.to_state.context.id }}"
               ttl: 0
               priority: high
+              url: "app://com.mcu.reolink"
+              clickAction: "app://com.mcu.reolink"
 
   # Create camera snapshot
   - service: camera.snapshot
