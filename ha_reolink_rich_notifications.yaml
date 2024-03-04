@@ -139,7 +139,7 @@ action:
             list
         %}
         {% if other_sensor_times|length > 0 %}
-          {{ trigger.to_state.last_updated - other_sensor_times|max < timedelta(retrigger_delay) }}
+          {{ trigger.to_state.last_updated - other_sensor_times|max < timedelta(**retrigger_delay) }}
         {% else %}
           false
         {% endif %}
