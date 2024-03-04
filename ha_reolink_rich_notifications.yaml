@@ -138,7 +138,7 @@ action:
         list
         }}
       camera_last_triggered_time: "{{ camera_other_sensor_times|max if camera_other_sensor_times|length > 0 else None }}"
-      should_skip_notification: "{{ camera_last_triggered_time is not none and (trigger.to_state.last_updated|as_datetime - camera_last_triggered_time|as_datetime < retrigger_delay) }}"
+      should_skip_notification: "{{ camera_last_triggered_time is not none and (trigger.to_state.last_updated - camera_last_triggered_time|as_datetime < retrigger_delay) }}"
 
   # Send notification without image first.
   - repeat:
