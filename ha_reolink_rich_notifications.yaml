@@ -137,7 +137,8 @@ action:
         map(attribute = 'last_updated') |
         list
         }}
-      camera_last_triggered_time: "{{ (camera_other_sensor_times | map('as_datetime') | max) if camera_other_sensor_times|length > 0 else None }}"
+      camera_last_triggered_time: "{{ camera_other_sensor_times max if camera_other_sensor_times|length > 0 else None }}"
+      wtf0: "{{ camera_other_sensor_times }}"
       wtf1: "{{ camera_last_triggered_time is not none }}"
       wtf2: "{{ trigger.to_state.last_updated }}"
       wtf3: "{{ camera_last_triggered_time|as_datetime }}"
