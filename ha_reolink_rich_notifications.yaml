@@ -137,12 +137,9 @@ action:
             expand |
             map(attribute = 'last_updated') |
             list
+            + [trigger.from_state.last_updated]
         %}
-        {% if other_sensor_times|length > 0 %}
-          {{ trigger.to_state.last_updated - other_sensor_times|max < timedelta(**retrigger_delay) }}
-        {% else %}
-          false
-        {% endif %}
+        {{ trigger.to_state.last_updated - other_sensor_times|max < timedelta(**retrigger_delay) }}
 
   - if:
       - condition: template
