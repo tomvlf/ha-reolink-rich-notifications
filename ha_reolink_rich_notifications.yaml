@@ -144,7 +144,9 @@ action:
           false
         {% endif %}
 
-  - if: "{{ should_skip_notification }}"
+  - if:
+      - condition: template
+        value_template: "{{ should_skip_notification }}"
     then:
       - stop "Skipping notification for being too soon."
 
