@@ -144,6 +144,10 @@ action:
           false
         {% endif %}
 
+  - if: "{{ should_skip_notification }}"
+    then:
+      - stop "Skipping notification for being too soon."
+
   # Send notification without image first.
   - repeat:
       for_each: "{{ notify_device }}"
