@@ -36,63 +36,6 @@ blueprint:
       selector:
         duration:
 
-    # Action 1
-
-    action_1_title:
-      name: First action name
-      description: Name of the first button
-      default: ""
-
-    action_1_uri:
-      name: URI for action 1 (Optional)
-      description: Optional URI for the first action
-      default: ""
-
-    first_action:
-      name: Action 1
-      description: "Action to run when the first action is clicked"
-      default: []
-      selector:
-        action:
-
-    # Action 2
-
-    action_2_title:
-      name: Second action name
-      description: Name of the second button
-      default: ""
-
-    action_2_uri:
-      name: URI for action 1 (Optional)
-      description: Optional URI for the second action
-      default: ""
-
-    second_action:
-      name: Action 2
-      description: Action to run when the second action is clicked"
-      default: []
-      selector:
-        action:
-
-    # Action 3
-
-    action_3_title:
-      name: Third action name
-      description: Name of the third button
-      default: ""
-
-    action_3_uri:
-      name: URI for action 3 (Optional)
-      description: Optional URI for the third action
-      default: ""
-
-    third_action:
-      name: Action 3
-      description: "Action to run when the third action is clicked"
-      default: []
-      selector:
-        action:
-
 mode: restart
 max_exceeded: silent
 
@@ -100,15 +43,6 @@ variables:
   notify_device: !input notify_device
   trigger_entities: !input trigger_entities
   retrigger_delay: !input retrigger_delay
-  action_1_title: !input action_1_title
-  action_1_uri: !input action_1_uri
-  first_action: !input first_action
-  action_2_title: !input action_2_title
-  action_2_uri: !input action_2_uri
-  second_action: !input second_action
-  action_3_title: !input action_3_title
-  action_3_uri: !input action_3_uri
-  third_action: !input third_action
 
 trigger:
   platform: state
@@ -183,36 +117,8 @@ action:
               priority: high
               url: "app://com.mcu.reolink"
               clickAction: "app://com.mcu.reolink"
-              actions: >
-                {% set titles = [action_1_title, action_2_title, action_3_title] %}
-                {% set uris = [action_1_uri, action_2_uri, action_3_uri] %}
-                {% set actions = namespace(data = []) %}
-
-                {% for title in titles %}
-                  {% if title|length %}
-                    {% set uri = uris[loop.index - 1] %}
-                    {% set action_name = "action" + loop.index|string %}
-                    {% set action = {
-                      "action": "URI" if uri|length else action_name,
-                      "title": title,
-                      "uri": uri 
-                      }
-                    %}
-                    {% set actions.data = actions.data + [action] %}
-                  {% endif %}
-                {% endfor %}
-                {{ actions.data }}
 
   # Wait for the user to select an action
   - wait_for_trigger:
       platform: event
       event_type: mobile_app_notification_action
-
-  # Do the action that the user selected
-  - choose:
-      - conditions: "{{ wait.trigger.event.data.action == 'action1' }}"
-        sequence: !input first_action
-      - conditions: "{{ wait.trigger.event.data.action == 'action2' }}"
-        sequence: !input second_action
-      - conditions: "{{ wait.trigger.event.data.action == 'action3' }}"
-        sequence: !input third_action
