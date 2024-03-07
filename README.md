@@ -25,6 +25,10 @@ To avoid redundant notifications (e.g. receiving Motion + Person at the same tim
 configuration setting to skip notifications if the same camera has already triggered a notification
 within a short time period (20 seconds by default).
 
-Snapshots are saved in the `/media/reolink_rich_notifications/` directory of home assistant.
+Snapshots are saved in the `/media/reolink_rich_notifications/` directory of home assistant. Due
+to limitations of home assistant automations, screenshots are not cleaned up and will accumulate
+in the media directory over time. To limit growth, snapshots are named using a combination of the
+camera name, current minute, and current hour. So the maximum number of files is 3600 multiplied by
+the number of cameras you have triggering notifications.
 
 - Originally forked from https://gist.github.com/McDAlexander/56eb3f2e421e283460b3d641fd002ea8

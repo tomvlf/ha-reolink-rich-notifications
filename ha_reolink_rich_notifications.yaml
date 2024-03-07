@@ -36,8 +36,8 @@ blueprint:
       selector:
         duration:
 
-mode: restart
-max_exceeded: silent
+mode: parallel
+max: 100
 
 variables:
   notify_device: !input notify_device
@@ -49,8 +49,6 @@ trigger:
   entity_id: !input trigger_entities
   from: "off"
   to: "on"
-  variables:
-    image_file: "reolink_rich_notifications/{{ trigger.to_state.last_updated | as_timestamp | timestamp_custom('%Y-%m-%d_%H-%M-%S') }}_{{ trigger.to_state.context.id }}.jpg"
 
 action:
   - variables:
@@ -62,6 +60,7 @@ action:
         (camera_entities | select('match', '.*_fluent$') | first) or
         (camera_entities | first)
         }}
+      image_file: "reolink_rich_notifications/{{ camera_to_snapshot }}_{{ trigger.to_state.last_updated | as_timestamp | timestamp_custom('%M-%S') }}.jpg"
       should_skip_notification: >
         {%
           set other_sensor_times =
@@ -117,8 +116,3 @@ action:
               priority: high
               url: "app://com.mcu.reolink"
               clickAction: "app://com.mcu.reolink"
-
-  # Wait for the user to select an action
-  - wait_for_trigger:
-      platform: event
-      event_type: mobile_app_notification_action
