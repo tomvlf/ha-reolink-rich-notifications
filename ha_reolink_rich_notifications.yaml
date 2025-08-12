@@ -1,10 +1,8 @@
 blueprint:
-  name: Reolink Rich Notifications
+  name: Reolink Rich Notifications + Chromecast TTS
   description: >
-    Send Reolink rich notifications to an Android device.
-
-    Documentation: https://github.com/jterrace/ha-reolink-rich-notifications
-
+    Send Reolink rich notifications to Android devices and optionally announce on selected Chromecast speakers.
+    
   domain: automation
   input:
     notify_device:
@@ -34,6 +32,28 @@ blueprint:
           integration: reolink
           multiple: false
 
+    cast_speakers:
+      name: Chromecast Speakers
+      description: Select one or more Cast media players to announce the message.
+      default: []
+      selector:
+        entity:
+          domain: media_player
+          integration: cast
+          multiple: true
+
+    tts_engine:
+      name: TTS Engine
+      description: Select your TTS engine (e.g., tts.google_translate or tts.cloud).
+      selector:
+        entity:
+          domain: tts
+
+    tts_message:
+      name: TTS Message
+      description: You can use templates. Example: "Ding dong! {{ state_attr(camera_entity, 'friendly_name') or camera_entity }}"
+      default: "Ding dong! Activity detected by {{ trigger.to_state.name if trigger.to_state else trigger.entity_id }}."
+
     retrigger_delay:
       name: Retrigger Delay
       description: Time to wait before triggering the same camera again.
@@ -51,6 +71,9 @@ variables:
   notify_device: !input notify_device
   trigger_entities: !input trigger_entities
   camera_entity: !input camera_entity
+  cast_speakers: !input cast_speakers
+  tts_engine: !input tts_engine
+  tts_message: !input tts_message
   retrigger_delay: !input retrigger_delay
   image_file: "reolink_rich_notifications/{{ camera_entity }}_{{ now().timestamp() | int }}.jpg"
 
@@ -61,6 +84,23 @@ trigger:
   to: "on"
 
 action:
+
+# Optional: Announce on selected Chromecast speakers
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ (cast_speakers | default([])) | length > 0 }}"
+        sequence:
+          - repeat:
+              for_each: "{{ cast_speakers }}"
+              sequence:
+                - service: tts.speak
+                  target:
+                    entity_id: !input tts_engine
+                  data:
+                    media_player_entity_id: "{{ repeat.item }}"
+                    message: "{{ tts_message }}"
+                    
   # Send initial notification (no image yet)
   - repeat:
       for_each: "{{ notify_device }}"
