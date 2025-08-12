@@ -29,7 +29,6 @@ blueprint:
       selector:
         entity:
           domain: camera
-          integration: reolink
           multiple: false
 
     cast_speakers:
@@ -52,7 +51,6 @@ blueprint:
     tts_message:
       name: TTS Message
       description: which notification to be spoken on the selected speakers
-
 
     retrigger_delay:
       name: Retrigger Delay
