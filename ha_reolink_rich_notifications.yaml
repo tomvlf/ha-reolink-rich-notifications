@@ -67,14 +67,15 @@ action:
       sequence:
         - service: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
           data:
-            title: "{{ this.attributes.friendly_name }}"
+            title: "{{ camera_entity.attributes.friendly_name }}"
             message: ""
             data:
-              tag: "{{ this.attributes.friendly_name }}"
+              tag: "{{ camera_entity.attributes.friendly_name }}"
               ttl: 0
               priority: high
-              url: "app://com.mcu.reolink"
-              clickAction: "app://com.mcu.reolink"
+              url: "app://homeassistant"
+              clickAction: "app://homeassistant"
+
 
   # Take snapshot using selected camera
   - service: camera.snapshot
@@ -88,12 +89,12 @@ action:
       sequence:
         - service: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
           data:
-            title: "{{ this.attributes.friendly_name }}"
+            title: "{{ camera_entity.attributes.friendly_name }}"
             message: ""
             data:
-              tag: "{{ this.attributes.friendly_name }}"
+              tag: "{{ camera_entity.attributes.friendly_name }}"
               image: "/media/local/{{ image_file }}"
               ttl: 0
               priority: high
-              url: "app://com.mcu.reolink"
-              clickAction: "app://com.mcu.reolink"
+              url: "app://homeassistant"
+              clickAction: "app://homeassistant"
