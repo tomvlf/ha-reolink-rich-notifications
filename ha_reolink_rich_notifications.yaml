@@ -51,8 +51,8 @@ blueprint:
 
     tts_message:
       name: TTS Message
-      description: You can use templates. Example: "Ding dong! {{ state_attr(camera_entity, 'friendly_name') or camera_entity }}"
-      default: "Ding dong! Activity detected by {{ trigger.to_state.name if trigger.to_state else trigger.entity_id }}."
+      description: which notification to be spoken on the sleceted speakers
+
 
     retrigger_delay:
       name: Retrigger Delay
