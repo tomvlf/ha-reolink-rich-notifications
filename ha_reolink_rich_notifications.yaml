@@ -25,7 +25,17 @@ blueprint:
           filter:
             - integration: reolink
               domain: binary_sensor
-
+   
+    trigger_entities:
+      name: Camera
+      description: These Reolink camero from which an image will be taken
+      selector:
+        entity:
+          multiple: false
+          filter:
+            - integration: reolink
+              domain: camera
+              
     retrigger_delay:
       name: Retrigger Delay
       description: Time to wait before triggering the same camera again.
