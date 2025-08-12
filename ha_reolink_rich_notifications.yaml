@@ -67,8 +67,8 @@ action:
       sequence:
         - service: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
           data:
-            title: "{{ camera_entity.attributes.friendly_name }}"
-            message: ""
+            title: "Visitor at the door"
+            message: "Doorbell rang"
             data:
               tag: "{{ camera_entity.attributes.friendly_name }}"
               ttl: 0
@@ -89,10 +89,10 @@ action:
       sequence:
         - service: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
           data:
-            title: "{{ camera_entity.attributes.friendly_name }}"
-            message: ""
+            title: "Visitor at the door"
+            message: "Doorbell rang"
             data:
-              tag: "{{ camera_entity.attributes.friendly_name }}"
+              tag: "Visitor at the door"
               image: "/media/local/{{ image_file }}"
               ttl: 0
               priority: high
