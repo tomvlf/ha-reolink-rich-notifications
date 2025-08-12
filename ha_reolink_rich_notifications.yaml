@@ -24,7 +24,18 @@ blueprint:
           domain: camera
           integration: reolink
           multiple: false
-
+          
+    trigger_entities:
+      name: Trigger Sensors
+      description: These Reolink sensors will be monitored to determine when to send
+        an alert.
+      selector:
+        entity:
+          multiple: true
+          filter:
+            - integration: reolink
+              domain: binary_sensor
+              
     retrigger_delay:
       name: Retrigger Delay
       description: Time to wait before triggering the same camera again.
