@@ -16,26 +16,24 @@ blueprint:
           integration: mobile_app
           multiple: true
 
+    trigger_entities:
+      name: Camera Trigger Entity
+      description: These Reolink entities (e.g. binary sensors) will trigger this automation.
+      selector:
+        entity:
+          multiple: false
+          filter:
+            - integration: reolink
+
     camera_entity:
-      name: Camera Entity
-      description: Choose the Reolink camera to use for snapshots.
+      name: Snapshot Camera
+      description: Choose the Reolink camera from which the image will be taken.
       selector:
         entity:
           domain: camera
           integration: reolink
           multiple: false
-          
-    trigger_entities:
-      name: Trigger Sensors
-      description: These Reolink sensors will be monitored to determine when to send
-        an alert.
-      selector:
-        entity:
-          multiple: true
-          filter:
-            - integration: reolink
-              domain: binary_sensor
-              
+
     retrigger_delay:
       name: Retrigger Delay
       description: Time to wait before triggering the same camera again.
@@ -51,18 +49,19 @@ max: 100
 
 variables:
   notify_device: !input notify_device
+  trigger_entities: !input trigger_entities
   camera_entity: !input camera_entity
   retrigger_delay: !input retrigger_delay
   image_file: "reolink_rich_notifications/{{ camera_entity }}_{{ now().timestamp() | int }}.jpg"
 
 trigger:
   platform: state
-  entity_id: !input camera_entity
+  entity_id: !input trigger_entities
   from: "off"
   to: "on"
 
 action:
-  # Send notification without image
+  # Send initial notification (no image yet)
   - repeat:
       for_each: "{{ notify_device }}"
       sequence:
@@ -77,13 +76,13 @@ action:
               url: "app://com.mcu.reolink"
               clickAction: "app://com.mcu.reolink"
 
-  # Create camera snapshot
+  # Take snapshot using selected camera
   - service: camera.snapshot
     data:
       entity_id: "{{ camera_entity }}"
       filename: "/media/{{ image_file }}"
 
-  # Re-send notification with image data
+  # Send updated notification with image
   - repeat:
       for_each: "{{ notify_device }}"
       sequence:
