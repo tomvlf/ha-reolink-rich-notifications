@@ -16,26 +16,15 @@ blueprint:
           integration: mobile_app
           multiple: true
 
-    trigger_entities:
-      name: Trigger Sensors
-      description: These Reolink sensors will be monitored to determine when to send an alert.
+    camera_entity:
+      name: Camera Entity
+      description: Choose the Reolink camera to use for snapshots.
       selector:
         entity:
-          multiple: true
-          filter:
-            - integration: reolink
-              domain: binary_sensor
-   
-    trigger_entities:
-      name: Camera
-      description: These Reolink camero from which an image will be taken
-      selector:
-        entity:
+          domain: camera
+          integration: reolink
           multiple: false
-          filter:
-            - integration: reolink
-              domain: camera
-              
+
     retrigger_delay:
       name: Retrigger Delay
       description: Time to wait before triggering the same camera again.
@@ -51,28 +40,18 @@ max: 100
 
 variables:
   notify_device: !input notify_device
-  trigger_entities: !input trigger_entities
+  camera_entity: !input camera_entity
   retrigger_delay: !input retrigger_delay
+  image_file: "reolink_rich_notifications/{{ camera_entity }}_{{ now().timestamp() | int }}.jpg"
 
 trigger:
   platform: state
-  entity_id: !input trigger_entities
+  entity_id: !input camera_entity
   from: "off"
   to: "on"
 
 action:
-  - variables:
-      camera_entities: "{{ device_entities(device_id(trigger.entity_id)) | select('match', '^camera\\.') | list }}"
-      camera_to_snapshot: >
-        {{
-        (camera_entities | select('match', '.*_snapshots_fluent$') | first) or
-        (camera_entities | select('match', '.*_snapshots_clear$') | first) or
-        (camera_entities | select('match', '.*_fluent$') | first) or
-        (camera_entities | first)
-        }}
-      image_file: "reolink_rich_notifications/{{ camera_to_snapshot }}.jpg"
-
-  # Send notification without image first.
+  # Send notification without image
   - repeat:
       for_each: "{{ notify_device }}"
       sequence:
@@ -89,11 +68,11 @@ action:
 
   # Create camera snapshot
   - service: camera.snapshot
-    data_template:
-      entity_id: "{{ camera_to_snapshot }}"
+    data:
+      entity_id: "{{ camera_entity }}"
       filename: "/media/{{ image_file }}"
 
-  # Re-send notification with image data.
+  # Re-send notification with image data
   - repeat:
       for_each: "{{ notify_device }}"
       sequence:
