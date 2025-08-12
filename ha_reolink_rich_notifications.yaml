@@ -60,25 +60,7 @@ action:
         (camera_entities | select('match', '.*_fluent$') | first) or
         (camera_entities | first)
         }}
-      image_file: "reolink_rich_notifications/{{ camera_to_snapshot }}_{{ trigger.to_state.last_updated | as_timestamp | timestamp_custom('%M-%S') }}.jpg"
-      should_skip_notification: >
-        {%
-          set other_sensor_times =
-            trigger_entities |
-            select('ne', trigger.entity_id) |
-            select('is_device_attr', 'id', device_id(trigger.entity_id)) |
-            expand |
-            map(attribute = 'last_updated') |
-            list
-            + [trigger.from_state.last_updated]
-        %}
-        {{ trigger.to_state.last_updated - other_sensor_times|max < timedelta(**retrigger_delay) }}
-
-  - if:
-      - condition: template
-        value_template: "{{ should_skip_notification }}"
-    then:
-      - stop: "Skipping notification for being too soon."
+      image_file: "reolink_rich_notifications/{{ camera_to_snapshot }}.jpg"
 
   # Send notification without image first.
   - repeat:
