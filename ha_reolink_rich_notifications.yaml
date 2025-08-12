@@ -70,7 +70,7 @@ action:
             title: "{{ this.attributes.friendly_name }}"
             message: ""
             data:
-              tag: "{{ trigger.to_state.context.id }}"
+              tag: "{{ this.attributes.friendly_name }}"
               ttl: 0
               priority: high
               url: "app://com.mcu.reolink"
@@ -88,10 +88,10 @@ action:
       sequence:
         - service: "notify.mobile_app_{{ device_attr(repeat.item, 'name') | slugify }}"
           data:
-            title: "{{ trigger.from_state.attributes.friendly_name }}"
+            title: "{{ this.attributes.friendly_name }}"
             message: ""
             data:
-              tag: "{{ trigger.to_state.context.id }}"
+              tag: "{{ this.attributes.friendly_name }}"
               image: "/media/local/{{ image_file }}"
               ttl: 0
               priority: high
